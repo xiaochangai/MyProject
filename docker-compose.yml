@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "28008:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SQLALCHEMY_DATABASE_URI=sqlite:///instance/accounting.db
+    volumes:
+      - ./instance:/app/instance
+    depends_on:
+      - db
+
+  db:
+    image: alpine
+    volumes:
+      - db-data:/app/instance
+    restart: always
+
+volumes:
+  db-data:
