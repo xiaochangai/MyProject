@@ -134,9 +134,23 @@ def get_current_user():
 @app.route('/api/transactions', methods=['GET'])
 @token_required
 def get_transactions():
-    # 只返回当前用户的交易记录
-    transactions = Transaction.query.filter_by(user_id=g.current_user.id).all()
-    return jsonify([t.to_dict() for t in transactions])
+    # 获取分页参数
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    
+    # 查询当前用户的交易记录，按日期倒序排序
+    pagination = Transaction.query.filter_by(user_id=g.current_user.id)\
+        .order_by(Transaction.date.desc())\
+        .paginate(page=page, per_page=per_page, error_out=False)
+    
+    transactions = pagination.items
+    
+    return jsonify({
+        'items': [t.to_dict() for t in transactions],
+        'total': pagination.total,
+        'pages': pagination.pages,
+        'current_page': page
+    })
 
 @app.route('/api/transactions/<int:id>', methods=['GET'])
 @token_required

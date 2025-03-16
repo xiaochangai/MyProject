@@ -27,6 +27,7 @@ import axios from 'axios';
 
 export default {
   name: 'Login',
+  inject: ['updateLoginStatus'],
   data() {
     return {
       form: {
@@ -68,6 +69,9 @@ export default {
         // 设置axios默认请求头
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         
+        // 更新登录状态
+        this.updateLoginStatus(true);
+        
         // 跳转到首页
         this.$router.push('/');
       } catch (error) {
@@ -91,11 +95,13 @@ export default {
   align-items: center;
   height: 100vh;
   background-color: #f5f7fa;
+  padding: 20px;
 }
 
 .login-card {
-  width: 400px;
-  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -105,6 +111,7 @@ export default {
   text-align: center;
   margin-bottom: 30px;
   color: #409EFF;
+  font-size: 1.8rem;
 }
 
 .login-form {
@@ -114,6 +121,8 @@ export default {
 .login-button {
   width: 100%;
   margin-top: 10px;
+  height: 40px;
+  font-size: 16px;
 }
 
 .login-error {
@@ -121,5 +130,30 @@ export default {
   font-size: 14px;
   text-align: center;
   margin-top: 15px;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 480px) {
+  .login-container {
+    padding: 15px;
+  }
+
+  .login-card {
+    padding: 20px;
+  }
+
+  .login-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .el-input {
+    font-size: 14px;
+  }
+
+  .login-button {
+    height: 36px;
+    font-size: 14px;
+  }
 }
 </style>
