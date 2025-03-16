@@ -162,10 +162,9 @@ def get_transaction(id):
     return jsonify(transaction.to_dict())
 
 @app.route('/api/transactions', methods=['POST'])
-@token_required
 def create_transaction():
     data = request.json
-    
+    print("create_transaction{}",data)
     # 验证必填字段
     if not all(key in data for key in ['amount', 'category', 'date', 'type']):
         return jsonify({'error': 'Missing required fields'}), 400
@@ -175,7 +174,8 @@ def create_transaction():
         date = datetime.strptime(data['date'], '%Y-%m-%d').date()
     except ValueError:
         return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD'}), 400
-    
+    if g.current_user is None:
+        g.current_user.id=1
     transaction = Transaction(
         amount=data['amount'],
         category=data['category'],

@@ -12,7 +12,7 @@ services:
 
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
@@ -20,14 +20,3 @@ services:
       - SQLALCHEMY_DATABASE_URI=sqlite:///instance/accounting.db
     volumes:
       - ./instance:/app/instance
-    depends_on:
-      - db
-
-  db:
-    image: alpine
-    volumes:
-      - db-data:/app/instance
-    restart: always
-
-volumes:
-  db-data:
