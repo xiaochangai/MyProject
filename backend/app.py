@@ -161,7 +161,36 @@ def get_transaction(id):
         return jsonify({'error': '无权访问此交易记录'}), 403
     return jsonify(transaction.to_dict())
 
+@app.route('/api/ptts', methods=['POST'])
+def ptts():
+    data = request.json
+    print("ptts{}",data)
+    # 验证必填字段
+    if not all(key in data for key in ['amount', 'category', 'date', 'type']):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    # 转换日期字符串为日期对象
+    try:
+        date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD'}), 400
+
+    transaction = Transaction(
+        amount=data['amount'],
+        category=data['category'],
+        description=data.get('description', ''),
+        date=date,
+        type=data['type'],
+        user_id=1  # 关联到当前登录用户
+    )
+    
+    db.session.add(transaction)
+    db.session.commit()
+    
+    return jsonify(transaction.to_dict()), 201
+
 @app.route('/api/transactions', methods=['POST'])
+@token_required
 def create_transaction():
     data = request.json
     print("create_transaction{}",data)
@@ -174,8 +203,6 @@ def create_transaction():
         date = datetime.strptime(data['date'], '%Y-%m-%d').date()
     except ValueError:
         return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD'}), 400
-    if g.current_user is None:
-        g.current_user.id=1
     transaction = Transaction(
         amount=data['amount'],
         category=data['category'],
