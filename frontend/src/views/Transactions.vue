@@ -4,6 +4,7 @@
       <div class="filter-section">
         <h2>账目列表</h2>
         <el-button type="primary" @click="showAddDialog">添加记录</el-button>
+        <el-button type="success" @click="exportTransactions">导出</el-button>
       </div>
       
       <!-- 移动端卡片列表 -->
@@ -195,6 +196,23 @@ const expenseCategories = [
 ];
 
 // 获取所有交易记录
+const exportTransactions = async () => {
+  try {
+    const response = await axios.get('/api/transactions/export', {
+      responseType: 'blob'
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `transactions_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    ElMessage.error('导出失败');
+  }
+};
+
 const fetchTransactions = async () => {
   loading.value = true;
   try {

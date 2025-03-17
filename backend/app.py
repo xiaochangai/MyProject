@@ -332,6 +332,35 @@ def category_statistics():
     
     return jsonify(result)
 
+# 在现有路由下方添加导出路由
+@app.route('/api/transactions/export', methods=['GET'])
+def export_transactions():
+    # 获取所有交易记录（不分页）
+    transactions = Transaction.query.order_by(Transaction.date.desc()).all()
+
+    # 生成CSV内容
+    csv_header = "日期,类型,类别,金额,描述\n"
+    csv_rows = []
+    for t in transactions:
+        csv_rows.append(
+            f'"{t.date.strftime("%Y-%m-%d")}",'
+            f'"{t.type}",'
+            f'"{t.category}",'
+            f'"{float(t.amount):.2f}",'
+            f'"{t.description}"'
+        )
+    
+    # 创建响应对象
+    response = app.response_class(
+        csv_header + "\n".join(csv_rows),
+        mimetype="text/csv",
+        headers={
+            "Content-disposition": 
+            f"attachment; filename=transactions_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv"
+        }
+    )
+    return response
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
