@@ -288,8 +288,10 @@ def monthly_statistics():
 
 @app.route('/api/statistics/yearly', methods=['GET'])
 def yearly_statistics():
-    years = db.session.query(extract('year', Transaction.date).distinct()).\
-        order_by(extract('year', Transaction.date)).all()
+    # 使用func.cast确保年份提取后为整数类型
+    years = db.session.query(
+        db.func.cast(extract('year', Transaction.date), db.Integer).label('year')
+    ).distinct().order_by('year').all()
     
     result = []
     for (year,) in years:
