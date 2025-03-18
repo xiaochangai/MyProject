@@ -4,6 +4,7 @@
       <div class="filter-section">
         <h2>账目列表</h2>
         <el-button type="primary" @click="showAddDialog">添加记录</el-button>
+        <el-button type="info" @click="fetchTransactions">刷新</el-button>
         <el-button type="success" @click="exportTransactions">导出</el-button>
       </div>
       

@@ -21,6 +21,7 @@ wheels/
 *.egg
 
 # Node.js
+frontend/node_modules/
 node_modules/
 dist/
 .npm
