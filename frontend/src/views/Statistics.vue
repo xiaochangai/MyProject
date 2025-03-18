@@ -129,6 +129,17 @@ const renderMonthlyChart = () => {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow'
+      },
+      formatter: function(params) {
+        let result = params[0].axisValue + '<br/>';
+        params.forEach(param => {
+          const value = param.value.toLocaleString('zh-CN', {
+            style: 'currency',
+            currency: 'CNY'
+          });
+          result += param.marker + param.seriesName + ': ' + value + '<br/>';
+        });
+        return result;
       }
     },
     legend: {
@@ -147,19 +158,64 @@ const renderMonthlyChart = () => {
         name: '收入',
         type: 'bar',
         data: incomes,
-        itemStyle: { color: '#67C23A' }
+        itemStyle: { color: '#67C23A' },
+        label: {
+          show: false,
+          position: 'top',
+          formatter: function(params) {
+            return params.value.toLocaleString('zh-CN', {
+              style: 'currency',
+              currency: 'CNY'
+            });
+          }
+        },
+        emphasis: {
+          label: {
+            show: true
+          }
+        }
       },
       {
         name: '支出',
         type: 'bar',
         data: expenses,
-        itemStyle: { color: '#F56C6C' }
+        itemStyle: { color: '#F56C6C' },
+        label: {
+          show: false,
+          position: 'top',
+          formatter: function(params) {
+            return params.value.toLocaleString('zh-CN', {
+              style: 'currency',
+              currency: 'CNY'
+            });
+          }
+        },
+        emphasis: {
+          label: {
+            show: true
+          }
+        }
       },
       {
         name: '结余',
         type: 'line',
         data: balances,
-        itemStyle: { color: '#409EFF' }
+        itemStyle: { color: '#409EFF' },
+        label: {
+          show: false,
+          position: 'top',
+          formatter: function(params) {
+            return params.value.toLocaleString('zh-CN', {
+              style: 'currency',
+              currency: 'CNY'
+            });
+          }
+        },
+        emphasis: {
+          label: {
+            show: true
+          }
+        }
       }
     ]
   };
